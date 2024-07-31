@@ -15,12 +15,21 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 	active = active_;
 	val = "";
 	desiredx = 0;
-	
+	holding = 0;
 	
 	
 	step = function() {
 		if !active exit;
 		
+		if keyboard_check(vk_anykey) {
+			holding++;
+			if holding >= 20 {
+				//keyboard_check_repeat()
+			}
+		}
+		
+		pos.y = clamp(pos.y, 0, array_length(text)-1);
+		pos.x = clamp(pos.x, 0, array_length(text[pos.y]));
 		var highlighting = highlight.x != -1;
 		
 		if !kunk_check(function(inputs) {
@@ -37,6 +46,8 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 			
 		}
 		movement();
+		pos.y = clamp(pos.y, 0, array_length(text)-1);
+		pos.x = clamp(pos.x, 0, array_length(text[pos.y]));
 		if val != "" {
 			if highlighting {
 				erase(pos, highlight);
@@ -47,7 +58,7 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 			}
 			insert(pos, val);
 			//array_insert(text[pos.y], pos.x, string_char_at(val, 1));
-			pos.x++;
+			//pos.x++;
 			val = "";
 		}
 		iterate text to {
@@ -57,8 +68,8 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 	
 	interactions = function() {
 		var highlighting = highlight.x != -1;
-		if keyboard_check_pressed(vk_tab) val = "\t";
-		if keyboard_check_pressed(vk_enter) {
+		//if keyboard_check_repeat(vk_tab) val = "\t";
+		if keyboard_check_repeat(vk_enter) {
 			savehistory();
 			var theline = line(pos.y);
 			var tabcount = string_contains(theline, "\t");
@@ -77,7 +88,7 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 		var movementkeys = [vk_left, vk_down, vk_up, vk_right, vk_end, vk_home, vk_pageup, vk_pagedown];
 		var moving = false;
 		iterate movementkeys to {
-			if keyboard_check_pressed(movementkeys[i]) moving = true;
+			if keyboard_check_repeat(movementkeys[i]) moving = true;
 		}
 		if moving {
 			if keyboard_check(vk_shift) && !highlighting {
@@ -86,7 +97,7 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 				dehighlight();
 			}
 		}
-		if keyboard_check_pressed(vk_backspace) {
+		if keyboard_check_repeat(vk_backspace) {
 			if highlighting {
 				savehistory();
 				erase(pos, highlight);
@@ -102,20 +113,36 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 				//log(text[pos.y]);
 			}
 		}
+		if keyboard_check_repeat(vk_delete) {
+			if highlighting {
+				savehistory();
+				erase(pos, highlight);
+				dehighlight();
+			} else if pos.x || true {
+				array_delete(text[pos.y], pos.x, 1);
+				//pos.x--;
+			} else if pos.y {
+				savehistory();
+				insert(new vec2(array_length(text[pos.y-1]), pos.y-1), line(pos.y));
+				array_delete(text, pos.y+1, 1);
+				pos.x = array_length(text[pos.y]);
+				//log(text[pos.y]);
+			}
+		}
 	}
 	
 	movement = function() {
 		var linesize = array_length(text[pos.y]);
-		if keyboard_check_pressed(vk_home) {
+		if keyboard_check_repeat(vk_home) {
 			pos.x = 0;
 			desiredx = pos.x;
 		}
-		if keyboard_check_pressed(vk_end) {
+		if keyboard_check_repeat(vk_end) {
 			pos.x = array_length(text[pos.y]);
 			desiredx = pos.x;
 		}
-		var hput = keyboard_check_pressed(vk_right)-keyboard_check_pressed(vk_left);
-		var vput = keyboard_check_pressed(vk_down)-keyboard_check_pressed(vk_up);
+		var hput = keyboard_check_repeat(vk_right)-keyboard_check_repeat(vk_left);
+		var vput = keyboard_check_repeat(vk_down)-keyboard_check_repeat(vk_up);
 		if keyboard_check(vk_control) && hput != 0 {
 			pos.x = nextspace(line(pos.y), hput, pos.x);
 			desiredx = pos.x;
@@ -143,14 +170,15 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 				pos.x = 0;
 			}
 		}
-		if keyboard_check_pressed(vk_pageup) {
+		if keyboard_check_repeat(vk_pageup) {
 			pos.y -= 5;
 		}
-		if keyboard_check_pressed(vk_pagedown) {
+		if keyboard_check_repeat(vk_pagedown) {
 			pos.y += 5;
 		}
 		if vput != 0 {
 			pos.y += vput;
+			pos.y = clamp(pos.y, 0, array_length(text)-1);
 			pos.x = min(array_length(text[pos.y]), desiredx);
 		}
 		pos.y = clamp(pos.y, 0, array_length(text)-1);
@@ -174,8 +202,13 @@ function textfield(x_, y_, width_, height_, active_=false, submit_=c_null, font_
 				highlight.x != -1 {
 					highlighting = !highlighting;
 				}
-				draw_set_color(highlighting ? c_blue : c_black);
+				
 				mychar = text[i][j];
+				if highlighting {
+					draw_set_color(c_blue);
+					draw_rectangle(x+xdraw, y+ydraw, x+xdraw+string_width(mychar), y+ydraw+string_height("O"), false);
+				}
+				draw_set_color(highlighting ? c_white : c_black);
 				draw_text(x+xdraw, y+ydraw, mychar);
 				if i == pos.y && j == pos.x && active {
 					drewbox = true;

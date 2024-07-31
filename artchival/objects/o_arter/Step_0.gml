@@ -52,12 +52,24 @@ if art != noone {
 			thing.active = false;
 			if mouse_within(thing.x, thing.y, thing.x+thing.width, thing.y+thing.height) {
 				thing.active = true;
+				thing.pos.x = 99;
+				thing.pos.y = 99;
 				se_play(se_select, u, u, .3);
 			}
 		}
 	}
 	iterate art.order to {
 		art.order[i].step();
+	}
+}
+
+if keyboard_check_pressed(vk_tab) {
+	iterate art.order to {
+		if art.order[i].active {
+			art.order[i].active = false;
+			art.order[cycle(i+itneg(keyboard_check(vk_shift)), array_length(art.order))].active = true;
+			break;
+		}
 	}
 }
 
@@ -69,19 +81,20 @@ if mouse_within(100, 100, 400, 400) && mouse_check_button_pressed(mb_left) {
 if mouse_within(250-218/2, 755-78/2, 250+218/2, 755+78/2) && mouse_check_button_pressed(mb_left) {
 	se_play(se_yay);
 	countplusser = 14;
-	var fold = "Archives/"+art.title.gather()+"_data/";
+	var fold = working_directory+"Archives/"+art.title.gather()+"_data/";
 	fold = string_replace(fold, "\n", "");
+	log(fold);
 	//log(fold);
 	//log(art.title);
 	//log(art.title.gather());
 	var file = file_text_open_write(fold+"data.txt");
-	file_text_write_string(file, $"Title - {art.title.gather()}\n");
-	file_text_write_string(file, $"Artist - {art.author.gather()}\n");
-	file_text_write_string(file, $"Date - {art.date.gather()}\n");
-	file_text_write_string(file, $"Series - {art.series.gather()}\n");
-	file_text_write_string(file, $"Software - {art.software.gather()}\n");
-	file_text_write_string(file, $"Hardware - {art.hardware.gather()}\n");
-	file_text_write_string(file, $"Description - {art.description.gather()}\n");
+	file_text_write_string(file, $"Title - {art.title.gather()}");
+	file_text_write_string(file, $"Artist - {art.author.gather()}");
+	file_text_write_string(file, $"Date - {art.date.gather()}");
+	file_text_write_string(file, $"Series - {art.series.gather()}");
+	file_text_write_string(file, $"Software - {art.software.gather()}");
+	file_text_write_string(file, $"Hardware - {art.hardware.gather()}");
+	file_text_write_string(file, $"Description - {art.description.gather()}");
 	file_text_close(file);
 	log(art.path);
 	var pats = fold+art.title.gather()+"."+art.extension;
@@ -92,4 +105,4 @@ if mouse_within(250-218/2, 755-78/2, 250+218/2, 755+78/2) && mouse_check_button_
 	art = noone;
 }
 
-pressave = mouse_within(250-218/2, 755-78/2, 250+218/2, 755+78/2) && mouse_check_button(mb_left);
+pressave = mouse_within(250-218/2, 755-78/2, 250+218/2, 755+78/2) && mouse_check_button(mb_left) && !lowmotion;

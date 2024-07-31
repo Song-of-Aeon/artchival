@@ -1,11 +1,13 @@
 {
   "FolderOrderSettings": [
+    {"name":"Artistry","order":20,"path":"folders/Artistry.yy",},
     {"name":"CHR","order":11,"path":"folders/CHR.yy",},
     {"name":"other","order":1,"path":"folders/CHR/other.yy",},
     {"name":"Dialogue","order":12,"path":"folders/Dialogue.yy",},
     {"name":"technical","order":1,"path":"folders/Dialogue/technical.yy",},
     {"name":"Entities","order":19,"path":"folders/Entities.yy",},
     {"name":"eases","order":1,"path":"folders/Entities/eases.yy",},
+    {"name":"Extensions","order":21,"path":"folders/Extensions.yy",},
     {"name":"Fonts","order":13,"path":"folders/Fonts.yy",},
     {"name":"Misc","order":14,"path":"folders/Misc.yy",},
     {"name":"Music","order":15,"path":"folders/Music.yy",},
@@ -19,8 +21,6 @@
     {"name":"vlambeer","order":1,"path":"folders/Scripts/drawing/vlambeer.yy",},
     {"name":"Sprites","order":1,"path":"folders/Sprites.yy",},
     {"name":"Textbox","order":18,"path":"folders/Textbox.yy",},
-    {"name":"Artistry","order":20,"path":"folders/Artistry.yy",},
-    {"name":"Extensions","order":21,"path":"folders/Extensions.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"pragma","order":43,"path":"scripts/pragma/pragma.yy",},

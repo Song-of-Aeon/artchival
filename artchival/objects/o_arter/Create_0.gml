@@ -12,7 +12,7 @@ artthing = function(sprite_, path_) constructor {
 	read bud out {
 		array_push(name, string_char_at(bud, i));
 	}
-	author.text = [[]];
+	author.text = [name];
 	date = new textfield(pos.x+210, pos.y+45, 85, 16);
 	series = new textfield(pos.x+35, pos.y+45+dif*1, 200, 16);
 	software = new textfield(pos.x+35, pos.y+45+dif*2, 200, 16);

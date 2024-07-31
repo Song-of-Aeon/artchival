@@ -43,6 +43,7 @@ function keyboard_check_repeat(key){
 			}
 		}
 	}
+	return false;
 }
 
 function makeEmptyKeyArray(){
